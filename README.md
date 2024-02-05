@@ -5,12 +5,12 @@ This web application provides a comprehensive solution for managing inventory an
 ![Screenshot of the web application.](img/screenshot.png)
 
 ## Features
-Dynamic Data Tables: Utilize Bootstrap tables to dynamically display and manage inventory, borrowers, and lenders.
-AJAX Data Fetching: Asynchronously load data from the server without reloading the page, enhancing user experience.
-Form Handling: Dynamically generate forms for adding or updating inventory items, borrowers, and lenders.
-Date Handling: Automatically calculate and display relevant dates, such as purchase dates and lending periods.
-Status and Condition Tracking: Monitor and update the status and condition of inventory items.
-Cookie-based Session Management: Use cookies to remember user actions and preferences across sessions.
+- Fast and responsive data tables: Utilize Bootstrap tables to dynamically display and manage inventory, borrowers, and lenders.
+- AJAX Data Fetching: Asynchronously load data from the server without reloading the page, enhancing user experience.
+- Form Handling: Dynamically generate forms for adding or updating inventory items, borrowers, and lenders.
+- Date Handling: Automatically calculate and display relevant dates, such as purchase dates and lending periods.
+- Status and Condition Tracking: Monitor and update the status and condition of inventory items.
+- Cookie-based Session Management: Use cookies to remember user actions and preferences across sessions.
 
 ## Getting Started
 
