@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="iso-8859-1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+		<meta name="author" content="Valentin Schwind" />
+
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		<link rel="stylesheet" href="css/jquery-ui.theme.min.css" />
+		<link rel="stylesheet" href="css/bootstrap-icons.min.css" />
+		<link rel="stylesheet" href="css/bootstrap-table.min.css" />
+
+		<script src="js/jquery-3.7.1.min.js"></script>
+		<script src="js/bootstrap.bundle.min.js"></script>
+		<script src="js/jquery-ui.min.js"></script>
+		<script src="js/jquery-ui.min.js"></script>
+		<script src="js/bootstrap-table.min.js"></script>
+		<script src="js/js.cookie.min.js"></script>
+
+		<style>
+			.tabledit-toolbar {
+				width: 90px;
+			}
+
+			.whiteBox {
+				max-width: 95%;
+			}
+
+			.table-borderless > tbody > tr > td,
+			.table-borderless > tbody > tr > th,
+			.table-borderless > tfoot > tr > td,
+			.table-borderless > tfoot > tr > th,
+			.table-borderless > thead > tr > td,
+			.table-borderless > thead > tr > th {
+				border: none;
+			}
+
+			.fixed-table-toolbar .btn-group {
+				float: left !important;
+			}
+
+			.fixed-table-toolbar .search {
+				padding-left: 1em;
+			}
+
+			.status {
+				border-radius: 5px;
+				padding: 2px 5px;
+				margin: 0 2px;
+				width: 100%;
+				display: block;
+			}
+
+			.available-highlight {
+				background-color: green;
+				color: white;
+			}
+
+			.reserved-highlight {
+				background-color: gold;
+				color: black;
+			}
+
+			.reserved-background {
+				--bs-table-bg: #fff3b2;
+			}
+
+			.overdue-highlight {
+				background-color: red;
+				color: white;
+			}
+
+			.overdue-background {
+				--bs-table-bg: #ffb9b9;
+			}
+
+			.maintainance-highlight {
+				background-color: violet;
+				color: black;
+			}
+
+			.blocked-highlight {
+				background-color: grey;
+				color: white;
+			}
+
+			.blocked-background {
+				--bs-table-bg: #eaeaea;
+			}
+
+			.lent-highlight {
+				background-color: orange;
+				color: black;
+			}
+
+			.lent-background {
+				--bs-table-bg: #ffdfa3;
+			}
+
+			.damaged-highlight {
+				background-color: red;
+				color: white;
+			}
+
+			.unknown-highlight {
+				background-color: black;
+				color: white;
+			}
+
+			.unknown-background {
+				--bs-table-bg: lightgray;
+			}
+
+			.error {
+				border: 3px red solid;
+			}
+
+			.bootstrap-table table tbody tr {
+				cursor: pointer;
+			}
+		</style>
+
+		<title>Lab Lending System</title>
+	</head>
+
+	<body>
+		<div id="mainFrame" class="vertical-center">
+			<div id="mainBox" class="whiteBox container rounded">
+				<div class="row">
+					<div class="col mt-1 mb-1">
+						<div class="float-end">
+							<a href="https://hci-studies.org"><img src="img/frankfurtlogo.png" class="float-end mr-3" width="140px" alt="Logo" /></a>
+						</div>
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col mt-1 mb-1">
+						<h1>Lab Lending System</h1>
+						<p>
+							This is the device lending system of the
+							<a href="https://www.frankfurt-university.de/mixed-reality-lab">Mixed Reality Lab</a>.
+						</p>
+					</div>
+				</div>
+				<div class="row">
+					<nav>
+						<div class="nav nav-tabs" id="nav-tab" role="tablist">
+							<button
+								class="nav-link active"
+								id="nav-lendings-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#nav-lendings"
+								type="button"
+								role="tab"
+								aria-controls="nav-lendings"
+								aria-selected="true"
+							>
+								<i class="bi bi-clock px-2"></i>
+								<div>Lendings</div>
+							</button>
+							<button class="nav-link" id="nav-archive-tab" data-bs-toggle="tab" data-bs-target="#nav-archive" type="button" role="tab" aria-controls="nav-archive" aria-selected="true">
+								<i class="bi bi-archive"></i>
+								<div>Archive</div>
+							</button>
+							<button
+								class="nav-link"
+								id="nav-inventory-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#nav-inventory"
+								type="button"
+								role="tab"
+								aria-controls="nav-inventory"
+								aria-selected="false"
+							>
+								<i class="bi bi-list-columns-reverse px-2"></i>
+								<div>Inventory</div>
+							</button>
+							<button
+								class="nav-link"
+								id="nav-borrowers-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#nav-borrowers"
+								type="button"
+								role="tab"
+								aria-controls="nav-borrowers"
+								aria-selected="false"
+							>
+								<i class="bi bi-basket px-2"></i>
+								<div>Borrowers</div>
+							</button>
+							<button class="nav-link" id="nav-lenders-tab" data-bs-toggle="tab" data-bs-target="#nav-lenders" type="button" role="tab" aria-controls="nav-lenders" aria-selected="false">
+								<i class="bi bi-send px-2"></i>
+								<div>Lenders</div>
+							</button>
+							<button
+								class="nav-link"
+								id="nav-locations-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#nav-locations"
+								type="button"
+								role="tab"
+								aria-controls="nav-locations"
+								aria-selected="false"
+							>
+								<i class="bi bi-pin-map-fill px-2"></i>
+								<div>Locations</div>
+							</button>
+						</div>
+					</nav>
+				</div>
+				<div class="row">
+					<div class="tab-content" id="nav-tabContent">
+						<div class="tab-pane fade show active" id="nav-lendings" role="tabpanel" aria-labelledby="nav-lendings-tab">
+							<div class="row mt-2 mb-2">
+								<div id="lendingsToolbar">
+									<button id="addLendingBtn" type="button" class="btn btn-primary" for-table="lendingsTable">New Lending</button>
+								</div>
+								<table id="lendingsTable" data-toolbar="#lendingsToolbar" data-search="true" data-show-columns="true" class="table table-borderless">
+									<thead>
+										<tr>
+											<!--<th data-field="ID" data-sortable="true">ID</th>-->
+											<th data-field="EnteringDate" data-sortable="true" data-sortable="true">Entering Date</th>
+											<th data-field="Borrower" data-sortable="true" data-sortable="true">Borrower</th>
+											<th data-field="Module" data-sortable="true" data-sortable="true">Module</th>
+											<th data-field="Lender" data-sortable="true">Lender</th>
+											<th data-field="Device" data-sortable="true">Device Name</th>
+											<th data-field="CurrentLocation" data-sortable="true">Current Location</th>
+											<th data-field="LendingDate" data-sortable="true">Lending Date</th>
+											<!--<th data-field="ExtendedDate" data-sortable="true">Extended Date</th>-->
+											<th data-field="PlannedReturnDate" data-sortable="true">Planned Return Date</th>
+											<th data-field="Status" data-sortable="true">Status</th>
+											<th data-field="DeviceCondition" data-sortable="true">Condition</th>
+											<th data-field="Comment" data-sortable="true">Comment</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+
+						<div class="tab-pane fade" id="nav-archive" role="tabpanel" aria-labelledby="nav-archive-tab">
+							<div class="row mt-2 mb-2">
+								<table id="archiveTable" data-search="true" data-show-columns="true" class="table table-borderless">
+									<thead>
+										<tr>
+											<!--<th data-field="ID" data-sortable="true">ID</th>-->
+											<th data-field="EnteringDate" data-sortable="true" data-sortable="true">Entering Date</th>
+											<th data-field="Borrower" data-sortable="true" data-sortable="true">Borrower</th>
+											<th data-field="Module" data-sortable="true" data-sortable="true">Module</th>
+											<th data-field="Lender" data-sortable="true">Lender</th>
+											<th data-field="Device" data-sortable="true">Device Name</th>
+											<!--<th data-field="CurrentLocation" data-sortable="true">Current Location</th>-->
+											<th data-field="LendingDate" data-sortable="true">Lending Date</th>
+											<th data-field="PlannedReturnDate" data-sortable="true">Planned Return Date</th>
+											<th data-field="ReturnDate" data-sortable="true">Return Date</th>
+											<th data-field="Status" data-sortable="true">Status</th>
+											<th data-field="DeviceCondition" data-sortable="true">Condition</th>
+											<th data-field="Comment" data-sortable="true">Comment</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+
+						<div class="tab-pane fade" id="nav-inventory" role="tabpanel" aria-labelledby="nav-inventory-tab">
+							<div class="row mt-2 mb-2">
+								<div id="inventoryToolbar">
+									<button id="addDeviceBtn" type="button" class="btn btn-primary" for-table="inventoryTable">Add Device</button>
+								</div>
+								<table id="inventoryTable" data-toolbar="#inventoryToolbar" data-search="true" data-show-columns="true" class="table table-borderless">
+									<thead>
+										<tr>
+											<!--<th data-field="ID" data-sortable="true">ID</th>-->
+											<th data-field="Device" data-sortable="true" data-sortable="true">Device Name</th>
+											<th data-field="Category" data-sortable="true" data-sortable="true">Category</th>
+											<th data-field="SerialNo" data-sortable="true">Serial No</th>
+											<th data-field="InventoryNo" data-sortable="true">Inventory No</th>
+											<th data-field="Purchased" data-sortable="true">Purchased</th>
+											<th data-field="CurrentLocation" data-sortable="true">Current Location</th>
+											<th data-field="Borrower" data-sortable="true">Borrowed By</th>
+											<th data-field="Lender" data-sortable="true">Lent By</th>
+											<th data-field="BelongsTo" data-sortable="true">Belongs To</th>
+											<th data-field="PlannedReturnDate" data-sortable="true">Planned Return Date</th>
+											<th data-field="LatestComment" data-sortable="true">Latest Comment</th>
+											<th data-field="Status" data-sortable="true">Status</th>
+											<th data-field="DeviceCondition" data-sortable="true">Condition</th>
+											<th data-field="InventoryListed" data-sortable="true">Inventory List</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+
+						<div class="tab-pane fade" id="nav-borrowers" role="tabpanel" aria-labelledby="nav-borrowers-tab">
+							<div class="row mt-2 mb-2">
+								<div id="borrowersToolbar">
+									<button id="addBorrowerBtn" type="button" class="btn btn-primary" for-table="borrowersTable">Add Borrower</button>
+								</div>
+								<table id="borrowersTable" data-toolbar="#borrowersToolbar" data-search="true" data-show-columns="true" class="table table-borderless">
+									<thead>
+										<tr>
+											<!--<th data-field="ID" data-sortable="true">ID</th>-->
+											<th data-field="Firstname" data-sortable="true" data-sortable="true">Firstname</th>
+											<th data-field="Lastname" data-sortable="true" data-sortable="true">Lastname</th>
+											<th data-field="Role" data-sortable="true">Role</th>
+											<th data-field="Email" data-sortable="true">E-Mail</th>
+											<th data-field="CourseOfStudy" data-sortable="true">Course of Study</th>
+											<th data-field="Module" data-sortable="true">Module</th>
+											<th data-field="Telephone" data-sortable="true">Telephone</th>
+											<th data-field="StudyID" data-sortable="true">Study ID</th>
+											<th data-field="LendingCount" data-sortable="true"># Lendings</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+
+						<div class="tab-pane fade" id="nav-lenders" role="tabpanel" aria-labelledby="nav-lenders-tab">
+							<div class="row mt-2 mb-2">
+								<div id="lendersToolbar">
+									<button id="addLenderBtn" type="button" class="btn btn-primary" for-table="lendersTable">Add Lender</button>
+								</div>
+								<table id="lendersTable" data-toolbar="#lendersToolbar" data-search="true" data-show-columns="true" class="table table-borderless">
+									<thead>
+										<tr>
+											<!--<th data-field="ID" data-sortable="true">ID</th>-->
+											<th data-field="Firstname" data-sortable="true" data-sortable="true">Firstname</th>
+											<th data-field="Lastname" data-sortable="true" data-sortable="true">Lastname</th>
+											<th data-field="Email" data-sortable="true">E-Mail</th>
+											<th data-field="Telephone" data-sortable="true">Telephone</th>
+											<th data-field="Role" data-sortable="true">Role</th>
+											<th data-field="LendingCount" data-sortable="true"># Lendings</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+
+						<div class="tab-pane fade" id="nav-locations" role="tabpanel" aria-labelledby="nav-locations-tab">
+							<div class="row mt-2 mb-2">
+								<div id="locationsToolbar">
+									<button id="addLocationBtn" type="button" class="btn btn-primary" for-table="locationsTable">Add Location</button>
+								</div>
+								<table id="locationsTable" data-toolbar="#locationsToolbar" data-search="false" data-show-columns="true" class="table table-borderless">
+									<thead>
+										<tr>
+											<!--<th data-field="ID" data-sortable="true">ID</th>-->
+											<th data-field="Location" data-sortable="true">Location</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="px-3 mb-2">
+						<p>
+							No liability for external links, correctness, completeness and up-todateness of any content. Site visits result in storing personal user data for lending. 
+							Utilization at the own risk of the user. Data can be stored on the computers to facilitate the user's website access.
+							Contribute at <a href="https://github.com/valentin-schwind/lab-lending-system">GitHub</a>.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<hr />
+		<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="loginModalLabel">Login</h5>
+					</div>
+					<div class="modal-body">
+						<p>We use cookies to recognize site access. By clicking <i>Login</i>, you consent to the processing of your data by us. Leave this website if you do not agree with this.</p>
+						<form id="inputForm">
+							<div class="form-group">
+								<label for="recipient-name" class="col-form-label">Enter Password:</label>
+								<input type="password" class="form-control" name="password" aria-hidden="true" />
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="loginBtn" class="btn btn-primary">Login</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="modalDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true" data-backdrop="true">
+			<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalLabel">Title</h5>
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form id="editForm" class="needs-validation" novalidate></form>
+					</div>
+					<div class="modal-footer justify-content-between">
+						<div>
+							<button type="button" class="btn btn-secondary" id="btnCancel" data-bs-dismiss="modal">Cancel</button>
+							<button type="button" class="btn btn-danger" id="modalDeleteBtn"><i class="bi bi-trash"></i>&nbsp;&nbsp;Delete</button>
+						</div>
+						<div>
+							<button type="button" class="btn btn-primary" id="modalReturnBtn"><i class="bi bi-box-arrow-in-down"></i>&nbsp;&nbsp;Return</button>
+							<button type="button" class="btn btn-primary" id="modalUpdateBtn"><i class="bi bi-box-save"></i>&nbsp;&nbsp;Save</button>
+							<button type="button" class="btn btn-primary" id="modalNewItemBtn"><i class="bi bi-file-earmark-plus"></i>&nbsp;&nbsp;Create</button>
+							<button type="button" class="btn btn-primary" id="modalCreateAndLendBtn"><i class="bi bi-file-earmark-plus"></i>&nbsp;&nbsp;Add and Lend</button>
+							<button type="button" class="btn btn-primary" id="modalLendBtn"><i class="bi bi-file-earmark-plus"></i>&nbsp;&nbsp;Lend</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">Are you sure you want to delete this item?</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+						<button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			// Initialize a debug flag to false; used to control logging and debugging features.
+			let debug = false;
+
+			// Initialize objects to store options for locations, borrowers, lenders, and devices.
+			var locationOptions = {};
+			var borrowersOptions = {};
+			var lendersOptions = {};
+			var deviceOptions = {};
+
+			// Initialize objects to track the state of devices in the system.
+			var availableDevices = {}; // Stores information on devices that are currently available for lending.
+			var lentDevices = {}; // Tracks devices that have been lent out to borrowers.
+			var overdueDevices = {}; // Keeps a record of devices that are overdue for return.
+			var numberLentDeviceIDs = {}; // Possibly maintains a count or identifiers of lent devices, though its exact purpose needs clarification.
+
+			// Declaration of a variable or function (not initialized here) that might be used to add and lend devices.
+			var addAndLend;
+			var updateAndLend;
+
+			//Cookies.remove('access')
+			//Cookies.remove('openNewLendingByBorrower')
+
+			// Defines role options for lenders, including staff members, student assistants (HiWi), professors, external individuals, and others.
+			var lenderRoleOptions = {
+				Staff: "Staff",
+				HiWi: "HiWi",
+				Professor: "Professor",
+				External: "External",
+				Other: "Other",
+			};
+
+			// Defines role options for borrowers, mirroring the lender roles to maintain consistency across user types.
+			var borrowerRoleOptions = {
+				Student: "Student",
+				Staff: "Staff",
+				HiWi: "HiWi",
+				Professor: "Professor",
+				External: "External",
+				Other: "Other",
+			};
+
+			// Lists options for courses of study, abbreviating each field to facilitate selection and categorization.
+			var courseOfStudyOptions = {
+				AI: "AI", // Allgemeine Inf.
+				E: "E", // Electrical Engineering
+				EBIS: "EBIS", // Economics, Business Informatics, and Social Sciences
+				HIS: "HIS", // High Integrity Systems
+				IBIS: "IBIS", // International Business Informatics Systems
+				ID: "ID", // Inclusive Design
+				INF: "INF", // Informatics
+				MB: "MB", // Mechanical Engineering
+				MT: "MT", // Mechanical Technology
+				PTD: "PTD", // Product Design
+				WI: "WI", // Business Informatics
+				Other: "Other",
+			};
+
+			// Specifies options for academic modules, including thesis projects, practical phases, and specific courses.
+			var moduleOptions = {
+				"BA Thesis": "Bachelor Thesis (BA)",
+				"MA Thesis": "Master Thesis (MA)",
+				"ProjectInf MA": "Project Informatics (MA)",
+				"ProjectInf BA": "Projekt Informatik (BA)",
+				Praxisphase: "Praxisphase",
+				IPR: "Interdisciplinary Project (IPR)",
+				HCI: "Human-Computer Interaction (HCI)",
+				HMI: "Human-Machine Interaction (HMI)",
+				MMI: "Mensch-Maschine Interaktion (MMI)",
+				UE: "Usability Engineering (UE)",
+				"Int.": "Internal Use (Int.)",
+				"Ext.": "External Use (Ext.)",
+				Other: "Other",
+			};
+
+			// Defines the lending status options for devices, including availability, current lending status, and reservation status.
+			var lentOptions = {
+				available: "available",
+				lent: "lent",
+				overdue: "overdue",
+				reserved: "reserved",
+				unknown: "unknown",
+			};
+
+			// Options for archiving devices, indicating whether a device is currently lent or has been filed in the archive.
+			var archiveOptions = {
+				lent: "lent",
+				filed: "filed",
+			};
+
+			// Inventory status options, detailing the listing and review status of devices within the system.
+			var inventoryOptions = {
+				listed: "listed",
+				"waiting for label": "waiting for label",
+				"under review": "under review",
+				"under review II": "under review II",
+				unknown: "unknown",
+				"not listed": "not listed",
+			};
+
+			// Comprehensive device status options, covering availability, maintenance, and specific restrictions.
+			var statusOptions = {
+				lent: "lent",
+				available: "available",
+				reserved: "reserved",
+				overdue: "overdue",
+				maintainance: "maintenance", // Note: Correct spelling to "maintenance".
+				"blocked for lab": "blocked for lab",
+				"blocked for lecture": "blocked for lecture",
+				unknown: "unknown",
+			};
+
+			// Condition options for devices, indicating their operational status and physical condition.
+			var conditionOptions = {
+				new: "new",
+				working: "working",
+				"partially working": "partially working",
+				repairing: "under repair", // Note: Consistency in terminology; consider using "repairing" or "under repair" uniformly.
+				damaged: "damaged",
+				defective: "defective",
+				unknown: "unknown",
+			};
+
+			// Start
+			$(document).ready(function () {
+				// Extracts the query string from the current URL.
+				const queryString = window.location.search;
+
+				// Parses the query string to facilitate access to its parameters.
+				const urlParams = new URLSearchParams(queryString);
+
+				// Constructs a selector for the tab to be opened based on the URL parameter 'tab'.
+				var openTab = "#nav-" + urlParams.get("tab") + "-tab";
+
+				// Logs the selector of the open tab to the console if debugging is enabled.
+				if (debug) console.log(openTab);
+
+				// Triggers a click event on the tab if the 'tab' URL parameter is present, effectively opening the tab.
+				if (urlParams.get("tab")) $(openTab).click();
+
+				// Hides the 'Create and Lend' button and shows the 'New Item' button, managing the visibility of modal dialog buttons.
+				$("#modalCreateAndLendBtn").hide();
+				$("#modalNewItemBtn").show();
+
+				// Attaches an event listener to all elements with the class 'nav-link'.
+				$(".nav-link").on("click", function (e) {
+					// Extracts the 'navLinkId' from the clicked element's ID, which is used for URL parameter updates.
+					var navLinkId = $(e.target).closest(".nav-link").attr("id").split("-")[1];
+					// Updates the URL parameter 'tab' to reflect the current navigation state without reloading the page.
+					updateURLParameter(window.location.href, "tab", navLinkId);
+					if (debug) console.log(navLinkId);
+					// Uses the HTML5 History API to replace the current history entry with the new URL.
+					window.history.replaceState("", "", updateURLParameter(window.location.href, "tab", navLinkId));
+				});
+
+				// Event listener for showing the login modal dialog when required.
+				$("#loginModal").on("show.bs.modal", function (event) {
+					var button = $(event.relatedTarget); // Button that triggered the modal
+					var recipient = button.data("whatever"); // Extracts data-* attributes
+					var modal = $(this);
+					// Sets the title of the modal and the value of an input field based on the extracted data.
+					modal.find(".modal-title").text("Booking Backend Login required");
+					modal.find(".modal-body input").val(recipient);
+				});
+
+				// Checks if access has been granted via cookies; shows the main frame or the login modal accordingly.
+				if (Cookies.get("access") == "granted") {
+					showMainFrame();
+				} else {
+					$("#loginModal").modal("show");
+					$("#mainFrame").hide();
+				}
+
+				// Enables the 'Enter' key to trigger a login attempt when focused on the password input field.
+				$("input[name='password']").keypress(function (e) {
+					if (e.which == "13") {
+						// ASCII code for Enter key
+						event.preventDefault(); // Prevents the default action
+						$("#loginBtn").click(); // Triggers a click event on the login button
+					}
+				});
+
+				// Prevents the default form submission and triggers a click event on the login button instead.
+				$("#inputForm").submit(function (event) {
+					event.preventDefault();
+					$("#loginBtn").click();
+				});
+
+				// Binds a click event listener to the login button.
+				$("#loginBtn").click(function () {
+					// Initiates an AJAX POST request to a server-side PHP script for access validation.
+					$.ajax({
+						type: "POST",
+						url: "php/grant_access.php", // The URL of the PHP script that validates login credentials.
+						data: $("#inputForm").serialize(), // Serializes the form data for submission.
+						success: function (response) {
+							// Checks if the response from the server indicates access is granted or if debug mode is true.
+							if (response.trim() == "Granted" || debug == true) {
+								// Sets a cookie named 'access' with the value 'granted' that expires in 1 day.
+								Cookies.set("access", "granted", { expires: 1 });
+								// Logs the value of the 'access' cookie to the console for debugging.
+								console.log("Cookie found: access " + Cookies.get("access"));
+
+								// Calls the function to display the main content frame if access is granted or in debug mode.
+								showMainFrame();
+							} else {
+								// Alerts the user if the password entered is wrong, showing the server's response for debugging.
+								alert("Wrong password entered. Response '" + response + "' Data: '" + $("#inputForm").serialize() + "'");
+							}
+						},
+					});
+				});
+
+				// Defines a function to handle the UI changes after successful login.
+				function showMainFrame() {
+					// Hides the login modal dialog.
+					$("#loginModal").modal("hide");
+					// Displays the main content frame of the application.
+					$("#mainFrame").show();
+
+					// Calls a function to load the tables, presumably to populate the main frame with data.
+					loadTables();
+				}
+
+				// Function to load various tables required by the application.
+				function loadTables() {
+					loadLocations(); // Calls a function to load location-related data.
+					loadBorrowers(); // Calls a function to load borrower-related data.
+					loadLenders(); // Calls a function to load lender-related data.
+					loadInventory(); // Calls a function to load inventory-related data. Lendings are loaded async when Inventory is completed.
+				}
+
+				function loadLocations() {
+					// Initializes an empty object to store location options.
+					locationOptions = {};
+
+					// Fetches location data synchronously from the server and parses the JSON response.
+					var data = JSON.parse(
+						$.ajax({
+							type: "GET", // HTTP method
+							url: "php/get_json_table.php?table=Locations", // URL to fetch data from, with query parameter for table name
+							dataType: "json", // Expected data type of the response
+							async: false, // Synchronous request (not recommended for production use)
+						}).responseText
+					);
+
+					// Populates the locationOptions object with IDs and names from the fetched data.
+					data.forEach(function (item) {
+						locationOptions[parseInt(item.ID)] = item.Location;
+					});
+
+					// Configuration object for the Bootstrap table.
+					var config = {
+						sqlTable: "Locations", // Name of the SQL table
+						tableName: "#locationsTable", // CSS selector for the table element
+						singleName: "Location", // Singular name for the data type, used in UI elements
+						addButton: "#addLocationBtn", // CSS selector for the "Add Location" button
+						url: "php/update_row.php?table=Locations", // URL for updating the table data
+						datePickers: [], // Array for date picker configurations (empty in this case)
+						data: data, // The fetched data
+						formField: {
+							// Configuration for form fields
+							datePicker: [], // Date picker configurations (none in this case)
+							input: [
+								// Input field configurations
+								{ field: "ID", disable: true }, // ID field, disabled for editing
+								{ field: "Location", placeholder: "Enter a location name..." }, // Location field with placeholder
+							],
+						},
+					};
+
+					// Calls a function to create and initialize a Bootstrap table with the specified configuration.
+					makeBootstrapTable(config);
+				}
+
+				function loadBorrowers() {
+					// Fetches borrower data synchronously and parses the JSON response.
+					var data = JSON.parse(
+						$.ajax({
+							type: "GET", // HTTP method for the request
+							url: "php/get_json_table.php?table=Borrowers", // Endpoint to fetch borrowers data
+							dataType: "json", // Expected data type of the response
+							async: false, // Makes the request synchronous
+						}).responseText
+					);
+
+					// Processes each borrower item to create a mapping of IDs to full names.
+					data.forEach(function (item) {
+						borrowersOptions[item.ID] = item.Firstname + " " + item.Lastname;
+					});
+
+					// Configuration object for displaying the borrowers table.
+					var config = {
+						sqlTable: "Borrowers", // Identifies the SQL table name
+						displayName: "Borrowers", // Display name for the table
+						singleName: "Borrower", // Singular form of the data type
+						tableName: "#borrowersTable", // Selector for the table element
+						addButton: "#addBorrowerBtn", // Selector for the "Add Borrower" button
+						url: "php/update_row.php?table=Borrowers", // Endpoint for updating borrower data
+						data: data, // The fetched and processed borrower data
+						formField: {
+							// Configuration for form fields
+							datePicker: [], // Configurations for date picker fields (empty here)
+							input: [
+								// Input field configurations
+								// Various fields with configurations like hiding, disabling, and placeholders
+							],
+							select: [
+								// Select (dropdown) configurations
+								// Configurations for role and course of study dropdowns
+							],
+						},
+					};
+
+					// Initializes a Bootstrap table with the specified configuration.
+					makeBootstrapTable(config);
+				}
+
+				function loadLenders() {
+					// Fetches lender data synchronously from the server and parses the JSON response.
+					var data = JSON.parse(
+						$.ajax({
+							type: "GET", // Specifies the request method.
+							url: "php/get_json_table.php?table=Lenders", // Endpoint URL to fetch lender data.
+							dataType: "json", // Expected data type of the response.
+							async: false, // Makes the request synchronous, blocking further execution until completed.
+						}).responseText
+					);
+
+					// Maps each lender's ID to a string combining their first and last names.
+					data.forEach(function (item) {
+						lendersOptions[item.ID] = item.Firstname + " " + item.Lastname;
+					});
+
+					// Configuration object for the Bootstrap table to display lenders.
+					var config = {
+						sqlTable: "Lenders", // Identifies the SQL table name for lenders.
+						displayName: "Lenders", // Display name used for UI elements.
+						singleName: "Lender", // Singular form of the data type, used in UI contexts.
+						tableName: "#lendersTable", // CSS selector for the table element.
+						addButton: "#addLenderBtn", // CSS selector for the button to add new lenders.
+						url: "php/update_row.php?table=Lenders", // Endpoint for updating lender data.
+						data: data, // The fetched and processed lender data.
+						formField: {
+							// Configuration for form fields in the add/edit lender form.
+							datePicker: [], // Placeholder for date picker configurations (unused here).
+							input: [
+								// Configurations for various input fields.
+								// ID and LendingCount fields are hidden and disabled. Firstname and Lastname are required.
+							],
+							select: [
+								// Configuration for a select (dropdown) field.
+								// Role field with options provided by lenderRoleOptions variable.
+							],
+						},
+					};
+
+					// Initializes and displays the lenders table using the specified configuration.
+					makeBootstrapTable(config);
+				}
+
+				function loadInventory() {
+					$.ajax({
+						url: "php/get_json_table.php?table=Inventory",
+						dataType: "json",
+						success: function (data) {
+							// Process each inventory item.
+							data.forEach(function (item) {
+								// Compile device options with category, device name, and identifiers.
+								deviceOptions[item.ID] =
+									item.Category + ": " + item.Device + (item.InventoryNo ? " (INV: " + item.InventoryNo + ")" : item.SerialNo ? " (SN: " + item.SerialNo + ")" : "");
+								// Track available devices.
+								if (item.Status == "available" && item.Device) availableDevices[item.ID] = deviceOptions[item.ID];
+							});
+
+							var config = {
+								sqlTable: "Inventory",
+								displayName: "Inventory",
+								singleName: "Device",
+								tableName: "#inventoryTable",
+								addButton: "#addDeviceBtn",
+								url: "php/update_row.php?table=Inventory",
+								formField: {
+									datePicker: [{ field: "Purchased", default: [{ action: "create", value: getCurrentDate() }] }],
+									input: [
+										{ field: "ID", disable: true, hide: true },
+										{ field: "Device", required: true, displayName: "Device Name", placeholder: "Enter device name..." },
+										{
+											field: "Category",
+											required: true,
+											placeholder: "Enter category...",
+											datalist: [
+												"Laptop",
+												"VR Headset",
+												"AR Headset",
+												"MR Headset",
+												"Tablet",
+												"Stativ",
+												"Sensor Kit",
+												"Sensor",
+												"Microcontroller",
+												"Microcomputer",
+												"Accessories",
+												"3D Printing Stuff",
+												"Camera",
+												"Phone",
+											],
+										},
+										{ field: "SerialNo", displayName: "Serial Number", placeholder: "Enter serial number of the device..." },
+										{ field: "InventoryNo", displayName: "Inventory Number", placeholder: "Enter the inventory number of the university..." },
+										{ field: "LatestComment", displayName: "Comment", placeholder: "Enter a comment..." },
+									],
+									select: [
+										{ field: "CurrentLocation", displayName: "Current Location", required: true, options: locationOptions, default: 0 },
+										{ field: "BelongsTo", displayName: "Belongs to", required: true, options: locationOptions, default: "0" },
+										{ field: "Borrower", displayName: "Borrower Name", options: borrowersOptions, default: 0, disable: true, hide: true },
+										{ field: "Lender", displayName: "Lender Name", options: lendersOptions, default: 0, disable: true, hide: true },
+										{
+											field: "Status",
+											options: statusOptions,
+											default: "available",
+											disableOptions: 'action === "create" && (text === "lent" || text === "overdue" || text === "reserved")',
+										},
+										{ field: "DeviceCondition", displayName: "Device Condition", options: conditionOptions, default: "new" },
+										{ field: "InventoryListed", displayName: "Listed in Inventory", options: inventoryOptions, default: "listed" },
+									],
+								},
+								columnReplacements: [
+									{ field: "Lender", options: lendersOptions },
+									{ field: "Borrower", options: borrowersOptions },
+									{ field: "CurrentLocation", options: locationOptions },
+									{ field: "BelongsTo", options: locationOptions },
+									{ field: "Device", options: deviceOptions },
+								],
+								data: data,
+							};
+
+							// Initializes and displays the inventory table using the specified configuration.
+							makeBootstrapTable(config);
+
+							loadLendings();
+						},
+						error: function (e) {
+							if (debug) console.log(e.responseText);
+						},
+					});
+				}
+
+				function loadLendings() {
+					$.ajax({
+						url: "php/get_json_table.php?table=Lendings",
+						dataType: "json",
+						success: function (data) {
+							var configOngoingLendings = {
+								sqlTable: "Lendings",
+								displayName: "Lendings",
+								singleName: "Lending",
+								tableName: "#lendingsTable",
+								addButton: "#addLendingBtn",
+								url: "php/update_row.php?table=Lendings",
+								formField: {
+									datePicker: [
+										{ field: "EnteringDate", displayName: "Entering", default: [{ action: "create", value: getCurrentDate() }], disable: true, hide: true },
+										{ field: "LendingDate", displayName: "Lending Date", default: [{ action: "create", value: getCurrentDate() }] },
+										{ field: "PlannedReturnDate", displayName: "Planned Return Date", required: true, default: [{ action: "create", value: addDate(7 * 9) }] },
+										{ field: "ReturnDate", displayName: "Return Date", disable: true, hide: true },
+									],
+									input: [
+										{ field: "ID", disable: true, hide: true },
+										{ field: "Comment", displayName: "Comment", placeholder: "Enter a comment..." },
+									],
+									list: [
+										{
+											field: "Device",
+											displayName: "Device Name",
+											required: true,
+											options: [
+												{ action: "create", value: 15, options: availableDevices },
+												{ action: "update", value: 1, options: deviceOptions },
+											],
+											disableAt: 'action === "update"',
+										},
+									],
+									select: [
+										{ field: "Borrower", displayName: "Borrower Name", required: true, options: borrowersOptions, placeholder: "Please select the person who gets the device..." },
+										{ field: "Lender", displayName: "Lender Name", required: true, options: lendersOptions, placeholder: "Please select the person who handed out the device..." },
+										{
+											field: "Module",
+											displayName: "Module Name",
+											required: true,
+											options: moduleOptions,
+											placeholder: "Please select the course/project/intend of that person...",
+										},
+										{ field: "DeviceCondition", displayName: "Device Condition", options: conditionOptions, default: "new" },
+										{ field: "CurrentLocation", displayName: "New Device Location", options: locationOptions, default: 3 },
+										{
+											field: "Status",
+											options: lentOptions,
+											default: "lent",
+											disableAt: 'action === "update" && row[key] === "lent"',
+											disableOptions: '(action === "create" && (text === "overdue"))',
+										},
+									],
+								},
+								columnReplacements: [
+									{ field: "Lender", options: lendersOptions },
+									{ field: "Borrower", options: borrowersOptions },
+									{ field: "CurrentLocation", options: locationOptions },
+									{ field: "Device", options: deviceOptions },
+								],
+								data: data,
+								filter: "filed",
+								show: false,
+							};
+
+							makeBootstrapTable(configOngoingLendings);
+
+							var configArchivedLendings = {
+								sqlTable: "Lendings",
+								displayName: "Archive",
+								tableName: "#archiveTable",
+								url: "php/update_row.php?table=Lendings",
+								formField: {
+									datePicker: [
+										{ field: "EnteringDate", disable: true },
+										{ field: "LendingDate", disable: true },
+										{ field: "PlannedReturnDate", disable: true },
+										{ field: "ReturnDate", default: [{ update: "update", value: getCurrentDate() }], disable: true },
+									],
+									input: [
+										{ field: "ID", disable: true },
+										{ field: "Comment", placeholder: "Enter a comment..." },
+									],
+									list: [
+										{
+											field: "Device",
+											options: [
+												{ action: "create", value: 15, options: availableDevices },
+												{ action: "update", value: 1, options: deviceOptions },
+											],
+											disableAt: 'action === "update"',
+										},
+									],
+									select: [
+										{ field: "Borrower", options: borrowersOptions, disable: true },
+										{ field: "Lender", options: lendersOptions, disable: true },
+										{ field: "Module", options: moduleOptions, disable: true },
+										{ field: "DeviceCondition", options: conditionOptions, disable: true },
+										{ field: "CurrentLocation", options: locationOptions, default: 0, disable: true },
+										{
+											field: "Status",
+											options: archiveOptions,
+											default: "filed",
+										},
+									],
+								},
+								columnReplacements: [
+									{ field: "Lender", options: lendersOptions },
+									{ field: "Borrower", options: borrowersOptions },
+									{ field: "CurrentLocation", options: locationOptions },
+									{ field: "Device", options: deviceOptions },
+								],
+								data: data,
+								filter: "filed",
+								show: true,
+							};
+
+							makeBootstrapTable(configArchivedLendings);
+
+							postLoading();
+						},
+						error: function (e) {
+							if (debug) console.log(e.responseText);
+						},
+					});
+				}
+
+				function makeBootstrapTable(tableConfig) {
+					$(tableConfig.tableName).bootstrapTable({
+						data: tableConfig.data, // Sets the data to be displayed in the table.
+						clickToSelect: true, // Enables row selection with a click.
+						cache: false, // Disables caching to ensure data is always fresh.
+						search: true, // Enables a search box to filter the table data.
+						pagination: false, // Disables pagination.
+						striped: false, // Disables striped row styling for visual differentiation.
+
+						onClickRow: function (row, $element, field) {
+							// Defines an action when a row is clicked. If the row has an ID, it triggers a modal for item update.
+							if (row.ID != null) showItemFormModal(tableConfig, row, row.ID, "update");
+						},
+						onSearch: function (data, status, jqXHR) {
+							// Placeholder for custom actions during search, currently empty.
+						},
+						onLoadSuccess: function (data, status, jqXHR) {
+							// Logs success message on data load if debugging is enabled.
+							if (debug) console.log("on onLoadSuccess");
+						},
+						onLoadError: function (data, status, jqXHR) {
+							// Logs error message on data load failure if debugging is enabled.
+							if (debug) console.log("on error");
+						},
+						onAll: function () {
+							// A series of operations to perform after all table events.
+							setDatavalueFromData(tableConfig); // Custom function to manipulate data values.
+							replaceValuesInColumn(tableConfig); // Custom function to replace values in a specific column.
+							highlightValuesInColumn(tableConfig, "Status", statusOptions); // Highlights status values based on predefined options.
+							highlightValuesInColumn(tableConfig, "Condition", conditionOptions); // Highlights condition values based on predefined options.
+							// Adds days to the planned return date for non-archive displays, indicating a dynamic adjustment based on current date.
+							if (tableConfig.displayName != "Archive") addDaysToDate(tableConfig, "PlannedReturnDate", getCurrentDate());
+							filterRow(tableConfig, "Status"); // Filters rows based on their status.
+						},
+					});
+
+					// Function to replace specific cell values in a table column based on predefined rules in tableConfig.
+					function replaceValuesInColumn(tableConfig) {
+						// Iterates over each column specified for replacement in the tableConfig object.
+						for (column in tableConfig.columnReplacements) {
+							// Initializes columnIndex to -1 to indicate that the column has not been found yet.
+							var columnIndex = -1;
+
+							// Iterates over each table header (th) element to find the index of the column to be replaced.
+							$(tableConfig.tableName + " thead th").each(function (index) {
+								// Checks if the data-field attribute of the header matches the field specified for replacement.
+								if ($(this).data("field") == tableConfig.columnReplacements[column].field) {
+									// If a match is found, sets columnIndex to the current index and exits the loop.
+									columnIndex = index;
+									return;
+								}
+							});
+
+							// Checks if a valid columnIndex was found.
+							if (columnIndex >= 0) {
+								// Iterates over each row in the table body (tbody).
+								$(tableConfig.tableName + " tbody tr").each(function () {
+									// Finds the cell (td) at the columnIndex position in the current row.
+									var $currentCell = $(this).find("td").eq(columnIndex);
+									// Retrieves and trims the text content of the cell.
+									var cellText = $currentCell.text().trim();
+
+									// Checks if there is a replacement rule for the current cell text.
+									if (tableConfig.columnReplacements[column].options[cellText] !== undefined) {
+										// If a replacement rule exists, updates the cell's text with the replacement value.
+										$currentCell.text(tableConfig.columnReplacements[column].options[cellText]);
+									}
+								});
+							}
+						}
+					}
+
+					$(tableConfig.addButton).click(function () {
+						if (debug) console.log("data: " + tableConfig.data);
+						addEntry(tableConfig);
+					});
+				}
+
+				// Defines a function to add a new entry to a table based on the provided table configuration.
+				function addEntry(tableConfig) {
+					// Calculates a new ID for the entry by finding the maximum ID in the current data and adding 1.
+					var newID =
+						tableConfig.data.reduce((max, item) => {
+							return item && item.ID > max ? item.ID : max;
+						}, 0) + 1;
+
+					// Determines the number of columns in the table by checking the first item in the data array.
+					var numberOfColumns = tableConfig.data.length > 0 && tableConfig.data[0] ? Object.keys(tableConfig.data[0]).length : 0;
+
+					// Initializes an object to represent the new row.
+					var newRow = {};
+					// Logs the number of columns to the console if debugging is enabled.
+					if (debug) console.log(numberOfColumns);
+					// If there are columns in the data, populates the newRow object with keys from the first data item.
+					if (numberOfColumns > 0) {
+						Object.keys(tableConfig.data[0]).forEach((key) => {
+							// Sets the value of the "ID" key to newID, and null for all other keys.
+							newRow[key] = key === "ID" ? newID : null;
+						});
+					} else {
+						// If no columns are present, sets newID to 0 (likely a fallback or error handling case).
+						newID = 0;
+					}
+
+					// Calls a function to display a modal or form for creating a new entry, passing the new row and ID.
+					showItemFormModal(tableConfig, newRow, newID, "create");
+				}
+
+				// Function to display a modal form for creating or updating table entries.
+				function showItemFormModal(config, row, id, action) {
+					// Selects the form element within the modal and clears any existing content.
+					var form = $("#editForm");
+					form.empty();
+
+					// Shows or hides buttons based on the presence of the addAndLend function.
+					if (addAndLend) {
+						$("#modalCreateAndLendBtn").show();
+					} else {
+						$("#modalNewItemBtn").show();
+						$("#modalCreateAndLendBtn").hide();
+					}
+
+					// Iterates over each property in the row object to create form elements for each.
+					for (var key in row) {
+						if (row.hasOwnProperty(key)) {
+							createFormElement(config, row, key, action, form);
+						}
+					}
+
+					// Adds an 'Add' button next to the borrower field for adding new borrowers.
+					$("#formRow_Borrower").append("<div class='col-md-1'><button id='addBorrowerEditBtn' type='button' class='btn btn-primary'>Add</button></div>");
+
+					// Customizes the modal based on the action (create or update).
+					if (action == "create") {
+						// Sets the modal title for creating a new item.
+						$("#modalLabel").text("New " + config.singleName);
+						// Hides buttons not relevant to the creation action.
+						$("#modalReturnBtn, #modalUpdateBtn, #modalDeleteBtn, #modalLendBtn").hide();
+
+						// Event handler for the 'Add' button next to the borrower field.
+						$("#addBorrowerEditBtn").on("click", function () {
+							addAndLend = true;
+							$("#addBorrowerBtn").click();
+							$("#modalCreateAndLendBtn").click(function () {
+								$("#modalNewItemBtn").click();
+							});
+						});
+
+						// Sets the label of the 'New Item' button based on the table being interacted with.
+						if (config.sqlTable == "Lendings") {
+							$("#modalNewItemBtn").html('<i class="bi bi-file-earmark-plus"></i>&nbsp;&nbsp;Lent');
+						} else {
+							$("#modalNewItemBtn").html('<i class="bi bi-file-earmark-plus"></i>&nbsp;&nbsp;Add');
+						}
+
+						// Shows or hides buttons based on the addAndLend status.
+						if (addAndLend) {
+							$("#modalCreateAndLendBtn").show();
+						} else {
+							$("#modalNewItemBtn").show();
+							$("#modalCreateAndLendBtn").hide();
+						}
+
+						// Event handler for the 'New Item' button click.
+						$("#modalNewItemBtn").click(function () {
+							// Updates the row object with values from the form.
+							row = updateRowByForm(form, row);
+							if (debug) console.log(form);
+
+							// Prevents form submission if the form is not valid.
+							var forms = document.querySelectorAll(".needs-validation");
+							Array.prototype.slice.call(forms).forEach(function (form) {
+								if (!form.checkValidity()) {
+									if (debug) console.log(form.reportValidity());
+									event.preventDefault();
+									event.stopPropagation();
+								} else {
+									// Submits the form data to a server-side script for processing.
+									$.ajax({
+										url: "php/update_row.php?table=" + config.sqlTable,
+										data: { ...row, action: "create" },
+										type: "POST",
+										success: function (response) {
+											if (debug) console.log(response);
+											// Handles post-submission actions based on the delegated addAndLend status.
+											if (addAndLend) {
+												Cookies.set("openNewLendingByBorrower", row.ID, { expires: 1 });
+												reload("Lendings");
+											} else {
+												reload(config.sqlTable);
+											}
+											// Closes the modal after successful submission.
+											$("#modalDialog").modal("hide");
+										},
+										error: function (xhr, status, error) {
+											// Logs error if the AJAX request fails.
+											if (debug) console.error("Error: " + error);
+										},
+									});
+								}
+								// Adds validation feedback to the form.
+								form.classList.add("was-validated");
+							});
+						});
+					}
+
+					// Configures the modal for the "update" action.
+					if (action == "update") {
+						// Sets the modal title for updating an item.
+						$("#modalLabel").text("Update " + config.singleName);
+
+						// Customizes the "Update" button with an icon.
+						$("#modalUpdateBtn").html('<i class="bi bi-save"></i>&nbsp;&nbsp;Update');
+
+						// Shows or hides the "Delete" button based on whether the item is a lending.
+						if (config.displayName == "Lendings") $("#modalDeleteBtn").hide();
+						else $("#modalDeleteBtn").show();
+
+						// Hides the "New Item" button and shows the "Update" button.
+						$("#modalNewItemBtn").hide();
+						$("#modalUpdateBtn").show();
+
+						// Conditionally shows the "Return" button for lendings.
+						if (config.displayName == "Lendings") $("#modalReturnBtn").show();
+						else $("#modalReturnBtn").hide();
+
+						// Shows the "Lend" button under specific conditions for inventory items.
+						if (config.displayName == "Inventory" && $("#edit_Status").val() == "available" && $("#edit_Device").val() != "" && $("#edit_currentLocation").val() != "") {
+							$("#modalLendBtn").show();
+							// Sets up the "Lend" button to trigger the "Update" button click.
+							$("#modalLendBtn").on("click", function () {
+								updateAndLend = true;
+								$("#modalUpdateBtn").click();
+							});
+						} else {
+							$("#modalLendBtn").hide();
+						}
+
+						// Handles the "Update" button click, updating the item based on form data.
+						$("#modalUpdateBtn").click(function () {
+							if (debug) console.log("update");
+							// Updates the row object with form values.
+							row = updateRowByForm(form, row);
+							console.log("updates");
+
+							// Submits the updated item data to the server.
+							$.ajax({
+								url: "php/update_row.php?table=" + config.sqlTable,
+								data: { ...row, action: "update" },
+								type: "POST",
+								success: function (response) {
+									if (debug) console.log(response);
+									// Updates the table row with the new data.
+									$(config.tableName).bootstrapTable("updateRow", { index: id, row: row }, true);
+									// Reloads the table based on the action taken.
+									if (updateAndLend) {
+										Cookies.set("openNewLendingByInventory", row.ID, { expires: 1 });
+										reload("Lendings");
+									} else {
+										reload(config.sqlTable);
+									}
+								},
+								error: function (xhr, status, error) {
+									if (debug) console.error("Error: " + error);
+								},
+							});
+						});
+
+						// Configures the "Return" button for updating return details.
+						$("#modalReturnBtn").click(function () {
+							if (debug) console.log("return");
+							// Updates the row object with form values and sets return details.
+							row = updateRowByForm(form, row);
+							row.ReturnDate = getCurrentDate();
+							row.Status = "filed";
+
+							// Submits the return update to the server.
+							$.ajax({
+								url: "php/update_row.php?table=" + config.sqlTable,
+								data: { ...row, action: "update" },
+								type: "POST",
+								success: function (response) {
+									if (debug) console.log(response);
+									// Updates the table row and closes the modal.
+									$(config.tableName).bootstrapTable("updateRow", { index: id, row: row }, true);
+									$("#modalDialog").modal("hide");
+									reload(config.sqlTable);
+								},
+								error: function (xhr, status, error) {
+									if (debug) console.error("Error: " + error);
+								},
+							});
+						});
+
+						// Sets up the "Delete" button to show a confirmation modal.
+						$("#modalDeleteBtn").click(function () {
+							if (debug) console.log("delete: " + id + " " + config.sqlTable);
+							// Shows the delete confirmation modal with the item ID and config passed as data.
+							$("#deleteConfirmationModal").data("id", id).data("config", config).modal("show");
+							$("#confirmDeleteBtn").click(function () {
+								var itemId = $("#deleteConfirmationModal").data("id");
+								var config = $("#deleteConfirmationModal").data("config");
+								// Removes the item from the table and submits a delete request to the server.
+								$(config.tableName).bootstrapTable("remove", {
+									field: "id",
+									values: itemId,
+								});
+								$.ajax({
+									url: "php/update_row.php?table=" + config.sqlTable,
+									data: { ID: itemId, action: "delete" },
+									type: "POST",
+									success: function (response) {
+										if (debug) console.log(response);
+										// Closes the modals and reloads the table.
+										$("#modalDialog").modal("hide");
+										$("#deleteConfirmationModal").modal("hide");
+										reload(config.sqlTable);
+									},
+									error: function (xhr, status, error) {
+										if (debug) console.error("Error: " + error);
+									},
+								});
+							});
+						});
+					}
+
+					// Shows the modal dialog.
+					$("#modalDialog").modal("show");
+				}
+
+				// Determine the type of form input based on the config, row content, action, and variables for the key.
+				function createFormElement(config, row, key, action, form) {
+					if (config.formField) {
+						// Creates a new div element to serve as a container for a single form row, assigning it a unique ID based on the key.
+						var formRow = $("<div id='formRow_" + key + "'>").addClass("row mb-3");
+
+						// Creates a div for the label column within the form row, setting a standard Bootstrap column width.
+						var labelCol = $("<div id='labelCol_" + key + "'>").addClass("col-md-3");
+
+						// Creates a div for the input column, allowing it to fill the remaining space in the row.
+						var inputCol = $("<div id='inputCol_" + key + "'>").addClass("col-md");
+
+						// Defines a function to create and return a label element with a display name or the key as its text.
+						function assignDisplayNameToLabel(key, newName) {
+							// Chooses between the provided newName and the key for the label's text, defaulting to key if newName is not provided.
+							var formattedLabel = newName ? newName : key;
+							// Creates a label element, setting its text, associating it with an input via the "for" attribute, and adding styling classes.
+							var label = $("<label>")
+								.text(formattedLabel)
+								.attr("for", "edit_" + key)
+								.addClass("form-label")
+								.addClass("fw-bold");
+							return label;
+						}
+
+						// Variables to hold conditionally hidden elements and the input element itself.
+						var hideMe;
+						var input;
+
+						// Iterates over date picker configurations to find a match for the current key.
+						for (var i in config.formField.datePicker) {
+							if (config.formField.datePicker[i].field == key) {
+								// Appends a label with a display name to the label column.
+								labelCol.append(assignDisplayNameToLabel(key, config.formField.datePicker[i].displayName));
+
+								// Determines whether the current form field should be hidden based on configuration.
+								hideMe = config.formField.datePicker[i].hide;
+
+								// Sets the default value for the date picker input based on the action (e.g., create or update).
+								for (var a in config.formField.datePicker[i].default) {
+									if (config.formField.datePicker[i].default[a].action == action) row[key] = config.formField.datePicker[i].default[a].value;
+								}
+
+								// Creates an input element of type "date", setting its ID, name, value, and classes.
+								input = $("<input>").attr({
+									type: "date",
+									id: "edit_" + key,
+									name: key,
+									value: row[key],
+									class: "form-control datepicker",
+								});
+
+								// Disables the input if specified by the configuration or a condition evaluated at runtime.
+								if (config.formField.datePicker[i].disable || eval(config.formField.datePicker[i].disableAt)) input.attr("disabled", true);
+							}
+						}
+
+						// Iterates over the input field configurations defined in the config object.
+						for (var i in config.formField.input) {
+							// Checks if the current configuration matches the key of the data being processed.
+							if (config.formField.input[i].field == key) {
+								// Appends a label with a display name to the label column using a helper function.
+								labelCol.append(assignDisplayNameToLabel(key, config.formField.input[i].displayName));
+
+								// Determines whether the current form field should be hidden based on configuration.
+								hideMe = config.formField.input[i].hide;
+
+								// Checks if there's a datalist associated with this input field.
+								var dl = config.formField.input[i].datalist;
+
+								// Creates an input element with attributes based on whether the row's value for this key exists.
+								if (!row[key]) {
+									input = $("<input>").attr({
+										type: "text",
+										id: "edit_" + key,
+										name: key,
+										placeholder: config.formField.input[i].placeholder, // Sets a placeholder if the row value is falsy.
+										value: row[key], // Sets the input's value to the row's value for this key.
+										required: config.formField.input[i].required, // Marks the input as required if specified.
+										class: "form-control",
+										list: dl ? "dl_" + key : null, // Associates the input with a datalist of suggested items if one is defined.
+									});
+								} else {
+									input = $("<input>").attr({
+										type: "text",
+										id: "edit_" + key,
+										name: key,
+										value: row[key],
+										required: config.formField.input[i].required,
+										class: "form-control",
+										list: dl ? "dl_" + key : null,
+									});
+								}
+
+								// If a datalist is defined, creates it and appends option elements for each value.
+								if (dl) {
+									var dlOptions = $("<datalist id='dl_" + key + "'>");
+									$.each(dl, function (index, optionValue) {
+										const $optionElement = $("<option>").val(optionValue);
+										dlOptions.append($optionElement);
+									});
+									input.append(dlOptions); // Note: This should be inputCol.append(dlOptions) to correctly add the datalist to the DOM.
+								}
+
+								// Disables the input if specified by the configuration or a condition evaluated at runtime.
+								if (config.formField.input[i].disable || eval(config.formField.input[i].disableAt)) input.attr("disabled", true);
+							}
+						}
+
+						// Iterates over the select field configurations defined in the config object.
+						for (var i in config.formField.select) {
+							// Checks if the current configuration matches the key of the data being processed.
+							if (config.formField.select[i].field == key) {
+								// Appends a label with a display name to the label column using a helper function.
+								labelCol.append(assignDisplayNameToLabel(key, config.formField.select[i].displayName));
+
+								// Determines whether the current form field should be hidden based on configuration.
+								hideMe = config.formField.select[i].hide;
+
+								// Creates a select element with specified attributes including ID, name, and classes.
+								input = $("<select>").attr({
+									id: "edit_" + key,
+									name: key,
+									class: "form-select form-select-md",
+									required: config.formField.select[i].required,
+								});
+
+								// Iterates over the options for the select element, adding each as an option tag.
+								$.each(config.formField.select[i].options, function (val, text) {
+									// Conditionally disables options if specified by the configuration.
+									if (eval(config.formField.select[i].disableOptions)) {
+										input.append($("<option>").attr("value", val).attr("disabled", true).text(text));
+									} else {
+										input.append($("<option>").attr("value", val).text(text));
+									}
+								});
+
+								// Adds a placeholder option if specified in the configuration.
+								if (config.formField.select[i].placeholder) {
+									const $placeholderOption = $("<option>", {
+										value: "",
+										text: config.formField.select[i].placeholder,
+										disabled: true,
+										selected: true,
+									});
+									input.prepend($placeholderOption);
+								}
+
+								// Sets the default value of the select element based on the row data or configuration default.
+								if (row[key] == undefined || row[key] == null || row[key] == "") {
+									input.val(config.formField.select[i].default);
+								} else {
+									input.val(row[key]);
+								}
+
+								// Disables the select element if specified by the configuration or a condition evaluated at runtime.
+								if (config.formField.select[i].disable || eval(config.formField.select[i].disableAt)) input.attr("disabled", true);
+							}
+						}
+
+						// Iterates over the list configurations defined in the config object.
+						for (var i in config.formField.list) {
+							var size = null; // Initializes a variable to hold the size attribute for the select element, if applicable.
+							// Checks if the current configuration matches the key of the data being processed.
+							if (config.formField.list[i].field == key) {
+								// Appends a label with a display name to the label column using a helper function.
+								labelCol.append(assignDisplayNameToLabel(key, config.formField.list[i].displayName));
+
+								// Determines whether the current form field should be hidden based on configuration.
+								hideMe = config.formField.list[i].hide;
+
+								// Iterates over the options for the select element to find options relevant to the current action.
+								for (var o in config.formField.list[i].options) {
+									if (config.formField.list[i].options[o].action == action) {
+										if (debug) console.log("List found"); // Logs to console if debug mode is enabled and a matching list is found.
+										// Sets the size attribute for the select element based on the configuration.
+										size = config.formField.list[i].options[o].value;
+										// Creates a select element with specified attributes including ID, name, classes, and size.
+										input = $("<select>").attr({
+											id: "edit_" + key,
+											name: key,
+											class: "form-select form-select-md",
+											size: size,
+											required: config.formField.list[i].required,
+										});
+
+										// Iterates over the options for the select element, adding each as an option tag.
+										$.each(config.formField.list[i].options[o].options, function (val, text) {
+											if (debug) console.log(action + " " + text); // Logs each option if debug mode is enabled.
+											input.append($("<option>").attr("value", val).text(text));
+										});
+									}
+								}
+
+								// Sets the default value of the select element based on the row data or configuration default.
+								if (row[key] == undefined || row[key] == null || row[key] == "") {
+									input.val(config.formField.list[i].default);
+								} else {
+									input.val(row[key]);
+								}
+
+								// Disables the select element if specified by the configuration or a condition evaluated at runtime.
+								if (config.formField.list[i].disable || eval(config.formField.list[i].disableAt)) input.attr("disabled", true);
+							}
+						}
+
+						// Adds a div for displaying invalid feedback, useful for form validation.
+						if (input) input.append("<div class='invalid-feedback'></div>");
+
+						// Appends the input element to the input column div.
+						inputCol.append(input);
+
+						// Appends both the label and input columns to the form row div.
+						formRow.append(labelCol).append(inputCol);
+
+						// Finally, appends the entire form row to the form.
+						form.append(formRow);
+
+						// Hides the form row if it is marked to be hidden based on the configuration.
+						if (hideMe) formRow.hide();
+					}
+				}
+
+				// Function to update a row object based on form input values.
+				function updateRowByForm(form, row) {
+					var updatedRow = {}; // Initializes an empty object to store updated values.
+					// Iterates over each input and select element within the form.
+					form.find("input, select").each(function () {
+						var input = $(this); // jQuery object for the current input/select element.
+						var key = input.attr("name"); // The name attribute of the input/select, used as the key.
+						var value = input.val(); // The current value of the input/select element.
+						updatedRow[key] = value; // Updates the key-value pair in the updatedRow object.
+					});
+					return updatedRow; // Returns the object containing updated row data.
+				}
+
+				function findHeaderIndexByColumnName(tableConfig, columnname) {
+					var columnIndex = -1;
+
+					// Iterate over each table header cell to find the index of the column by matching the data-field attribute.
+					$(tableConfig.tableName + " thead th").each(function (index) {
+						if ($(this).data("field") === columnname) {
+							columnIndex = index; // Set columnIndex to the current index if a match is found.
+							return false; // Exit the loop early since the target column has been found.
+						}
+					});
+					return columnIndex;
+				}
+
+				// Function to replace cell values in a specific column of a table based on provided options.
+				function replaceValuesInColumn(tableConfig, columnname, options) {
+					var columnIndex = findHeaderIndexByColumnName(tableConfig, columnname);
+
+					// If a valid column index was found, iterates over each row in the table.
+					if (columnIndex >= 0) {
+						$(tableConfig.tableName + " tr").each(function () {
+							var $currentCell = $(this).find("td").eq(columnIndex); // Finds the cell in the target column for the current row.
+							var cellText = $currentCell.text().trim(); // Gets the trimmed text of the current cell.
+							// If a replacement option exists for the current cell text, updates the cell with the new value.
+							if (options[cellText] !== undefined) {
+								$currentCell.text(options[cellText]);
+							}
+						});
+					}
+				}
+
+				// Function to add days to date information within a specific column of a table.
+				function addDaysToDate(tableConfig, columnname, targetDate) {
+					var columnIndex = findHeaderIndexByColumnName(tableConfig, columnname);
+
+					// Proceed if a valid column index was found.
+					if (columnIndex >= 0) {
+						// Iterate over each row in the table body.
+						$(tableConfig.tableName + " tbody tr").each(function () {
+							var currentCell = $(this).find("td").eq(columnIndex); // Find the cell in the target column for the current row.
+							var originDate = currentCell.text(); // Get the text of the current cell, which is the original date.
+							var startDate = new Date(originDate); // Convert the original date text to a Date object.
+							var endDate = new Date(targetDate); // Convert the target date to a Date object.
+
+							// Check if both dates are valid.
+							if (isValidDate(startDate) && isValidDate(endDate)) {
+								// Calculate the difference in days between the start date and the end date.
+								var diffInDays = parseInt("" + Math.floor((startDate - endDate) / (1000 * 60 * 60 * 24)));
+								// Update the cell to display the original date and the difference in days.
+								currentCell.html(originDate + " | " + (diffInDays >= 0 ? "in " + Math.abs(diffInDays) + " days" : Math.abs(diffInDays) + " days overdue"));
+							}
+						});
+					}
+				}
+
+				// Helper function to check if a date is valid.
+				function isValidDate(date) {
+					return date instanceof Date && !isNaN(date);
+				}
+
+				// Function to highlight specific values within a column of a table.
+				function highlightValuesInColumn(tableConfig, columnname, options) {
+					var columnIndex = findHeaderIndexByColumnName(tableConfig, columnname);
+
+					// Proceed if a valid column index was found.
+					if (columnIndex >= 0) {
+						// Iterate over each row in the table body.
+						$(tableConfig.tableName + " tbody tr").each(function () {
+							var $currentCell = $(this).find("td").eq(columnIndex);
+							var cellText = $currentCell.text();
+							// Create a regular expression to match the cell text.
+							var regex = new RegExp("(" + cellText + ")", "gi");
+							// Replace the matched text with a span element for highlighting.
+							var html = cellText.replace(regex, '<span class="' + columnname.toLowerCase() + " " + cellText + '-highlight filtered">$1</span>');
+							// Add a class to the row based on the cell text for additional styling.
+							$currentCell.closest("tr").addClass(cellText + "-background");
+							// Update the cell's HTML with the highlighted text.
+							$currentCell.html(html);
+						});
+					}
+				}
+
+				// Function to filter rows in a table based on a specific column's content.
+				function filterRow(tableConfig, columnname) {
+					// Initially, no column index is set.
+					var columnIndex = findHeaderIndexByColumnName(tableConfig, columnname);
+
+					// Proceed if a valid column index was found.
+					if (columnIndex >= 0) {
+						// Iterate over each row in the table body.
+						$(tableConfig.tableName + " tbody tr").each(function () {
+							// Determine if the row should be shown based on the filter condition.
+							// The 'show' property in 'config' determines if matching rows should be shown or hidden.
+							// The 'filter' property contains the text to match against.
+							var shouldShow = tableConfig.show
+								? $(this).find("td").eq(columnIndex).text().indexOf(tableConfig.filter) > -1
+								: $(this).find("td").eq(columnIndex).text().indexOf(tableConfig.filter) === -1;
+							$(this).toggle(shouldShow);
+						});
+					}
+				}
+
+				// Function to handle actions after the page has loaded.
+				function postLoading() {
+					// Logs the values of specific cookies related to lending operations.
+					console.log("Cookie set: open lending by borrower " + Cookies.get("openNewLendingByBorrower"));
+					console.log("Cookie set: open lending by inventory " + Cookies.get("openNewLendingByInventory"));
+
+					// Checks if the cookie for "openNewLendingByBorrower" is set and not empty or undefined.
+					if (Cookies.get("openNewLendingByBorrower") != "" && Cookies.get("openNewLendingByBorrower") != undefined && Cookies.get("openNewLendingByBorrower") != null) {
+						// Simulates a click on the "Add Lending" button to initiate adding a new lending entry.
+						$("#addLendingBtn").click();
+						// Sets the value of the "Borrower" field in the form to the value stored in the cookie.
+						$("#edit_Borrower").val(Cookies.get("openNewLendingByBorrower"));
+						// Resets the cookie for "openNewLendingByBorrower" to an empty string, effectively clearing it.
+						Cookies.set("openNewLendingByBorrower", "", { expires: 1 });
+					}
+
+					// Similar to the above, but for the "openNewLendingByInventory" cookie.
+					if (Cookies.get("openNewLendingByInventory") != "" && Cookies.get("openNewLendingByInventory") != undefined && Cookies.get("openNewLendingByInventory") != null) {
+						// Triggers the "Add Lending" button click for a new lending entry related to inventory.
+						$("#addLendingBtn").click();
+						// Sets the "Device" field in the form to the value from the "openNewLendingByInventory" cookie.
+						$("#edit_Device").val(Cookies.get("openNewLendingByInventory"));
+						// Clears the "openNewLendingByInventory" cookie by setting it to an empty string.
+						Cookies.set("openNewLendingByInventory", "", { expires: 1 });
+					}
+				}
+
+				// Function to reload the page and navigate to a specific table tab.
+				function reload(gotoTable) {
+					// Converts the gotoTable parameter to lowercase to ensure consistency in URL parameters.
+					var tab = gotoTable.toLowerCase();
+					// Constructs a new URL by appending a query string with the tab parameter to the current page's pathname.
+					var newUrl = window.location.pathname + "?tab=" + encodeURIComponent(tab);
+					// Changes the current window location to the new URL, causing the page to reload with the specified tab active.
+					window.location.href = newUrl;
+				}
+
+				// Function to populate table headers and body with data from a configuration object.
+				function setDatavalueFromData(tableConfig) {
+					// Checks if the data property in tableConfig is a non-empty array.
+					if (!Array.isArray(tableConfig.data) || tableConfig.data.length === 0) {
+						return; // Exits the function if data is not an array or is empty.
+					}
+
+					var data = tableConfig.data; // Stores the data array for easier access.
+					var tableSelector = tableConfig.tableName; // The CSS selector for the target table.
+
+					// Validates the tableSelector to ensure it's a non-empty string.
+					if (typeof tableSelector !== "string" || tableSelector.trim().length === 0) {
+						return; // Exits the function if tableSelector is invalid.
+					}
+
+					// Populates the table header with data.
+					$(tableSelector + " thead tr").each(function (rowIndex) {
+						$(this)
+							.find("th")
+							.each(function (colIndex) {
+								// Checks if the current row and column indices are within the bounds of the data array.
+								if (rowIndex < data.length && colIndex < data[rowIndex].length) {
+									var headerCellValue = data[rowIndex][colIndex]; // Retrieves the value for the current header cell.
+									// Updates the text of the header cell if the value is defined and not null.
+									if (headerCellValue !== undefined && headerCellValue !== null) {
+										$(this).text(headerCellValue);
+									}
+								}
+							});
+					});
+
+					// Populates the table body with data.
+					$(tableSelector + " tbody tr").each(function (rowIndex) {
+						$(this)
+							.find("td")
+							.each(function (colIndex) {
+								var adjustedRowIndex = rowIndex + 1; // Adjusts the row index to account for header row(s).
+								// Checks if the adjusted row and column indices are within the bounds of the data array.
+								if (adjustedRowIndex < data.length && colIndex < data[adjustedRowIndex].length) {
+									var cellValue = data[adjustedRowIndex][colIndex]; // Retrieves the value for the current cell.
+									// Updates the text of the cell if the value is defined and not null.
+									if (cellValue !== undefined && cellValue !== null) {
+										$(this).text(cellValue);
+									}
+								}
+							});
+					});
+				}
+
+				function updateURLParameter(url, param, paramVal) {
+					var newAdditionalURL = "";
+					var tempArray = url.split("?"); // Splits the URL into base URL and query string.
+					var baseURL = tempArray[0]; // The part before the query string.
+					var additionalURL = tempArray[1]; // The query string part.
+					var temp = "";
+					if (additionalURL) {
+						tempArray = additionalURL.split("&"); // Splits the query string into individual parameters.
+						for (var i = 0; i < tempArray.length; i++) {
+							if (tempArray[i].split("=")[0] != param) {
+								// Checks if the current parameter is not the one to update.
+								newAdditionalURL += temp + tempArray[i]; // Adds it to the new query string.
+								temp = "&"; // Ensures subsequent parameters are correctly appended.
+							}
+						}
+					}
+
+					var rows_txt = temp + "" + param + "=" + paramVal; // Prepares the parameter to be added or updated.
+					return baseURL + "?" + newAdditionalURL + rows_txt; // Constructs the new URL.
+				}
+
+				function getCurrentDate() {
+					const today = new Date(); // Gets the current date.
+					const year = today.getFullYear(); // Extracts the year.
+					const month = String(today.getMonth() + 1).padStart(2, "0"); // Formats the month to two digits.
+					const day = String(today.getDate()).padStart(2, "0"); // Formats the day to two digits.
+					return `${year}-${month}-${day}`; // Returns the formatted date string.
+				}
+
+				function addDate(daysToAdd) {
+					const today = new Date(); // Gets the current date.
+					today.setDate(today.getDate() + daysToAdd); // Adds the specified number of days.
+					const year = today.getFullYear(); // Extracts the year of the new date.
+					const month = String(today.getMonth() + 1).padStart(2, "0"); // Formats the month to two digits.
+					const day = String(today.getDate()).padStart(2, "0"); // Formats the day to two digits.
+					return `${year}-${month}-${day}`; // Returns the formatted date string.
+				}
+			});
+		</script>
+	</body>
+</html>
