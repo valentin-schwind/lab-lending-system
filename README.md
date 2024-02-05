@@ -2,6 +2,8 @@
 
 This web application provides a comprehensive solution for managing inventory and lending operations for labs. It allows users to track devices, borrowers, and lenders, facilitating the lending process from start to finish.
 
+![Screenshot of the web application.](screenshot.png)
+
 ## Features
 Dynamic Data Tables: Utilize Bootstrap tables to dynamically display and manage inventory, borrowers, and lenders.
 AJAX Data Fetching: Asynchronously load data from the server without reloading the page, enhancing user experience.
